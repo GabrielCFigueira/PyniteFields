@@ -56,7 +56,7 @@ class GaloisField():
             self.coefs = []
         
         # Set separate parameter for the field dimension
-        self.dim = int(math.pow(p, n))
+        self.dim = int(pow(p, n))
 
         # Initialize the pth root of unity
         self.w = pthRootOfUnity(p)
