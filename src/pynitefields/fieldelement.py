@@ -33,7 +33,7 @@ def inverse(number, mod):
 
 def polyxgcd(a, b, irre, mod):
     """return (g, x, y) such that a*x + b*y = g = gcd(a, b)"""
-
+    
     if degree(a) == 0:
         b, x0, y0 = xgcd(a[0], mod)
         b = [b % mod] + [0] * (degree(irre) - 1)
@@ -52,12 +52,18 @@ def polyxgcd(a, b, irre, mod):
             a, b = r, a
             y0, y1 = y1, polysub(y0, polymul(q, y1, irre, mod), mod)
             x0, x1 = x1, polysub(x0, polymul(q, x1, irre, mod), mod)
+    rest = b[0]
+    if rest != 1:
+        for i in range(len(b)):
+            b[i] = b[i] * inverse(rest, mod) % mod
+            x0[i] = x0[i] * inverse(rest, mod) % mod
+            y0[i] = y0[i] * inverse(rest, mod) % mod
     return b, x0, y0
 
 def polyinverse(a, irre, mod):
     g, x, _ = polyxgcd(a, irre, irre, mod)
     if g != [1] + [0] * (len(g) - 1):
-        raise ValueError(str(g) + "Isnt mod a prime?")
+        raise ValueError(str(g) + " Isnt mod a prime? " + str(x))
     return x[:degree(irre)]
 
 def polymul(a, b, irre, mod):
@@ -364,7 +370,7 @@ class FieldElement():
         """
         # Prime case
         if self.n == 1:
-            return FieldElement(self.p, self.n, [int(pow(self.prim_power, exponent)) % self.p])
+            return FieldElement(self.p, self.n, [int(self.prim_power ** exponent) % self.p])
         # Power of prime case
         else:
             new_coefs = []
@@ -477,10 +483,7 @@ class FieldElement():
                 print("Error, 0 has no multiplicative inverse.")
                 return
 
-            for i in range(0, self.p):
-                if (self.prim_power * i) % self.p == 1:
-                    return FieldElement(self.p, self.n, [i])
-            #return FieldElement(self.p, self.n, inverse(self.prim_power, self.p))
+            return FieldElement(self.p, self.n, [inverse(self.prim_power, self.p)])
         
         else: # Power of prime case
             if self.field_list != []:
