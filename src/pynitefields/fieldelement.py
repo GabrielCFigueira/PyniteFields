@@ -33,7 +33,6 @@ def inverse(number, mod):
 
 def polyxgcd(a, b, irre, mod):
     """return (g, x, y) such that a*x + b*y = g = gcd(a, b)"""
-    
     if degree(a) == 0:
         b, x0, y0 = xgcd(a[0], mod)
         b = [b % mod] + [0] * (degree(irre) - 1)
@@ -53,6 +52,7 @@ def polyxgcd(a, b, irre, mod):
             y0, y1 = y1, polysub(y0, polymul(q, y1, irre, mod), mod)
             x0, x1 = x1, polysub(x0, polymul(q, x1, irre, mod), mod)
     rest = b[0]
+    b = b[:degree(irre)]
     if rest != 1:
         for i in range(len(b)):
             b[i] = b[i] * inverse(rest, mod) % mod
